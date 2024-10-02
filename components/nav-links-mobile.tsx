@@ -12,7 +12,7 @@ const links = [
 	{ name: "Stocks", href: "/dashboard/stocks", icon: Scroll },
 ];
 
-const NavLinksMobile = () => {
+export const NavLinksMobile = () => {
 	const pathname = usePathname();
 
 	return (
@@ -29,5 +29,3 @@ const NavLinksMobile = () => {
 		</>
 	);
 };
-
-export default NavLinksMobile;
