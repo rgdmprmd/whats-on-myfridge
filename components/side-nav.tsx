@@ -1,28 +1,34 @@
 import Link from "next/link";
-import { NavLinks } from "@/components/nav-links";
-import { Button } from "@/components/ui/button";
-import { Power } from "lucide-react";
+// import { NavLinks } from "@/components/nav-links";
+// import { Button } from "@/components/ui/button";
+// import { Power } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Package2, Settings } from "lucide-react";
+import { NavLinks } from "./nav-links";
 
 export function SideNav() {
 	return (
-		<div className="flex h-full flex-col px-3 py-4 md:px-2">
-			<Link className="mb-2 flex h-20 items-center justify-start font-semibold bg-emerald-500 text-white rounded-md  p-4 md:h-20" href="/">
-				whats-on-my-fridge
-			</Link>
-			<div className="flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2">
-				<NavLinks />
-				<div className="hidden h-auto w-full grow md:block"></div>
-				<form
-				// action={async () => {
-				// 	"use server";
-				// 	await signOut();
-				// }}
-				>
-					<Button type="submit" variant="link">
-						<Power /> <span className="hidden md:block">Sign Out</span>
-					</Button>
-				</form>
-			</div>
-		</div>
+		<aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
+			<TooltipProvider>
+				<nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
+					<Link href="/dashboard" className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base">
+						<Package2 className="h-4 w-4 transition-all group-hover:scale-110" />
+						<span className="sr-only">Acme Inc</span>
+					</Link>
+					<NavLinks />
+				</nav>
+				<nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-5">
+					<Tooltip>
+						<TooltipTrigger asChild>
+							<Link href="#" className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8">
+								<Settings className="h-5 w-5" />
+								<span className="sr-only">Settings</span>
+							</Link>
+						</TooltipTrigger>
+						<TooltipContent side="right">Settings</TooltipContent>
+					</Tooltip>
+				</nav>
+			</TooltipProvider>
+		</aside>
 	);
 }

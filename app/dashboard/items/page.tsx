@@ -45,7 +45,7 @@ const ItemsPage = () => {
 				<p className="text-muted-foreground">All available items you can use.</p>
 			</div>
 			<div>
-				<Link href="/dashboard/invoices/create" className={cn(buttonVariants(), "bg-emerald-500 hover:bg-emerald-300")}>
+				<Link href="/dashboard/items/create" className={cn(buttonVariants(), "bg-emerald-500 hover:bg-emerald-300")}>
 					<PlusIcon className="h-5 md:mr-2" /> <span className="hidden md:block">Add new Item </span>
 				</Link>
 				<DataTable columns={columns} data={data} />
