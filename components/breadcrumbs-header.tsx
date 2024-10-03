@@ -1,37 +1,40 @@
 "use client";
 
-import React from "react";
+import React, { Fragment } from "react";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 export const BreadcrumbsHeader = () => {
 	const pathname = usePathname().split("/");
-	pathname.shift();
-	if (pathname.length < 2) return null;
+
+	// Split the pathname and filter out empty values
+	const pathSegments = pathname.filter((segment) => segment);
+	if (pathSegments.length < 2) return null;
 
 	return (
 		<Breadcrumb className="hidden md:flex">
 			<BreadcrumbList>
-				{pathname.map((path, index) => {
-					if (index === pathname.length - 1) {
+				{pathSegments.map((path, index) => {
+					const properPath = path.charAt(0).toUpperCase() + path.slice(1);
+					if (index === pathSegments.length - 1) {
 						return (
-							<>
+							<Fragment key={index}>
 								<BreadcrumbItem>
-									<BreadcrumbPage>{path.charAt(0).toUpperCase() + path.slice(1)}</BreadcrumbPage>
+									<BreadcrumbPage>{properPath}</BreadcrumbPage>
 								</BreadcrumbItem>
-							</>
+							</Fragment>
 						);
 					} else {
 						return (
-							<>
+							<Fragment key={index}>
 								<BreadcrumbItem>
 									<BreadcrumbLink asChild>
-										<Link href={`/${path}`}>{path.charAt(0).toUpperCase() + path.slice(1)}</Link>
+										<Link href={`/${pathSegments.slice(0, index + 1).join("/")}`}>{properPath}</Link>
 									</BreadcrumbLink>
 								</BreadcrumbItem>
 								<BreadcrumbSeparator />
-							</>
+							</Fragment>
 						);
 					}
 				})}
