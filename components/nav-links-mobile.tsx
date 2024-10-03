@@ -1,26 +1,25 @@
 "use client";
 
 import React from "react";
-import { Box, Home, Scroll } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
-
-const links = [
-	{ name: "Dashboards", href: "/dashboard", icon: Home },
-	{ name: "Items", href: "/dashboard/items", icon: Box },
-	{ name: "Stocks", href: "/dashboard/stocks", icon: Scroll },
-];
+import { cn, links } from "@/lib/utils";
 
 export const NavLinksMobile = () => {
 	const pathname = usePathname();
+	const isExactMatch = (path: string) => pathname === path;
+	const isItemsActive = (path: string) => pathname.startsWith(path) && !isExactMatch("/dashboard");
+
+	const isActive = (name: string, path: string) => {
+		return (name === "Dashboards" && isExactMatch(path)) || (name !== "Dashboards" && isItemsActive(path));
+	};
 
 	return (
 		<>
 			{links.map((link) => {
 				const LinkIcon = link.icon;
 				return (
-					<Link key={link.href} href={link.href} className={cn("flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground", { "text-foreground": pathname === link.href })}>
+					<Link key={link.href} href={link.href} className={cn("flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground", { "text-foreground": isActive(link.name, link.href) })}>
 						<LinkIcon className="h-5 w-5" />
 						{link.name}
 					</Link>
