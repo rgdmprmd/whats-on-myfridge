@@ -18,7 +18,7 @@ export const BreadcrumbsHeader = () => {
 						return (
 							<>
 								<BreadcrumbItem>
-									<BreadcrumbPage>{path}</BreadcrumbPage>
+									<BreadcrumbPage>{path.charAt(0).toUpperCase() + path.slice(1)}</BreadcrumbPage>
 								</BreadcrumbItem>
 							</>
 						);
@@ -27,7 +27,7 @@ export const BreadcrumbsHeader = () => {
 							<>
 								<BreadcrumbItem>
 									<BreadcrumbLink asChild>
-										<Link href={`/${path}`}>{path}</Link>
+										<Link href={`/${path}`}>{path.charAt(0).toUpperCase() + path.slice(1)}</Link>
 									</BreadcrumbLink>
 								</BreadcrumbItem>
 								<BreadcrumbSeparator />
