@@ -22,7 +22,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
 							<Button variant="outline" size="icon" className="overflow-hidden rounded-full">
-								<Image src="/placeholder-user.png" width={36} height={36} alt="Avatar" className="overflow-hidden rounded-full" />
+								<Image src="/placeholder_user.png" width={36} height={36} alt="Avatar" className="overflow-hidden rounded-full" />
 							</Button>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">

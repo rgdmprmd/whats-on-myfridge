@@ -8,10 +8,21 @@ import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import Link from "next/link";
 
+// export type Item = {
+// 	id: string;
+// 	name: string;
+// 	category: string;
+// };
+
 export type Item = {
+	category: {
+		id: string;
+		name: string;
+	};
+} & {
 	id: string;
 	name: string;
-	category: string;
+	categoryId: string;
 };
 
 export const columns: ColumnDef<Item>[] = [
@@ -27,7 +38,7 @@ export const columns: ColumnDef<Item>[] = [
 		header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
 	},
 	{
-		accessorKey: "category",
+		accessorKey: "category.name",
 		header: ({ column }) => <DataTableColumnHeader column={column} title="Category" />,
 	},
 	{

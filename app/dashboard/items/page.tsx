@@ -5,6 +5,7 @@ import React from "react";
 import { DataTable } from "@/app/dashboard/items/data-table";
 import { columns } from "./columns";
 import { PlusIcon } from "lucide-react";
+import prismadb from "@/lib/prismadb";
 
 type Item = {
 	id: string;
@@ -35,8 +36,12 @@ export const itemsDummy: Item[] = [
 	},
 ];
 
-const ItemsPage = () => {
-	const data = itemsDummy;
+const ItemsPage = async () => {
+	const data = await prismadb.item.findMany({
+		include: {
+			category: true,
+		},
+	});
 
 	return (
 		<div className="flex flex-col space-y-4">
