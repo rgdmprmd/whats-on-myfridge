@@ -4,28 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DataTableColumnHeader } from "@/components/ui/datatable-column-header";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { ItemAndCategoryType } from "@/lib/type";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import Link from "next/link";
 
-// export type Item = {
-// 	id: string;
-// 	name: string;
-// 	category: string;
-// };
-
-export type Item = {
-	category: {
-		id: string;
-		name: string;
-	};
-} & {
-	id: string;
-	name: string;
-	categoryId: string;
-};
-
-export const columns: ColumnDef<Item>[] = [
+export const columns: ColumnDef<ItemAndCategoryType>[] = [
 	{
 		id: "select",
 		header: ({ table }) => <Checkbox checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")} onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)} aria-label="Select all" />,

@@ -19,3 +19,11 @@ export type ItemType = {
 	slug: string;
 	category_id: string;
 };
+
+export type ItemAndCategoryType = {
+	id: string;
+	name: string;
+	slug: string;
+	category_id: string;
+	category: { name: string };
+};

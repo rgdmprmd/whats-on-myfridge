@@ -1,11 +1,9 @@
 import { SideNav } from "@/components/side-nav";
 import { SideNavMobile } from "@/components/side-nav-mobile";
 import { BreadcrumbsHeader } from "@/components/breadcrumbs-header";
-import { CircleUser, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import { signOut } from "@/auth";
+import { AvatarHeader } from "@/components/avatar-header";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
 	return (
@@ -19,31 +17,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 						<Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
 						<Input type="search" placeholder="Search..." className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]" />
 					</div>
-					<DropdownMenu>
-						<DropdownMenuTrigger asChild>
-							<Button variant="outline" size="icon" className="overflow-hidden rounded-full">
-								<CircleUser className="h-5 w-5" />
-								<span className="sr-only">Toggle user menu</span>
-							</Button>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent align="end">
-							<DropdownMenuLabel>My Account</DropdownMenuLabel>
-							<DropdownMenuSeparator />
-							<DropdownMenuItem>Settings</DropdownMenuItem>
-							<DropdownMenuItem>Support</DropdownMenuItem>
-							<DropdownMenuSeparator />
-							<form
-								action={async () => {
-									"use server";
-									await signOut();
-								}}
-							>
-								<button type="submit" className="w-full text-left border">
-									<DropdownMenuItem>Sign Out</DropdownMenuItem>
-								</button>
-							</form>
-						</DropdownMenuContent>
-					</DropdownMenu>
+					<AvatarHeader />
 				</header>
 				<main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">{children}</main>
 			</div>

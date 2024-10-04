@@ -3,45 +3,25 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import React from "react";
 import { DataTable } from "@/app/dashboard/items/data-table";
-import { columns } from "./columns";
+import { columns } from "@/app/dashboard/items/columns";
 import { PlusIcon } from "lucide-react";
 import prismadb from "@/lib/prismadb";
-
-type Item = {
-	id: string;
-	name: string;
-	category: string;
-};
-
-export const itemsDummy: Item[] = [
-	{
-		id: "abc1",
-		name: "Sabun Mandi",
-		category: "Bathroom",
-	},
-	{
-		id: "abc2",
-		name: "Pasta Gigi",
-		category: "Bathroom",
-	},
-	{
-		id: "abc3",
-		name: "Indomie soto",
-		category: "Food",
-	},
-	{
-		id: "abc4",
-		name: "Cabai",
-		category: "Food",
-	},
-];
 
 const ItemsPage = async () => {
 	const data = await prismadb.item.findMany({
 		include: {
-			category: true,
+			category: {
+				select: {
+					name: true, // Only select the 'name' field from Category
+				},
+			},
+		},
+		orderBy: {
+			name: "asc",
 		},
 	});
+
+	console.log(data);
 
 	return (
 		<div className="flex flex-col space-y-4">
