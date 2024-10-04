@@ -6,13 +6,18 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Input } from "@/components/ui/input";
 import { DataTablePagination } from "@/components/ui/datatable-pagination";
 import { DataTableViewOptions } from "@/components/ui/datatable-view-options";
+import Link from "next/link";
+import { PlusCircleIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui/button";
 
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
 	data: TData[];
+	createLocation: string;
 }
 
-export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({ columns, data, createLocation }: DataTableProps<TData, TValue>) {
 	const [sorting, setSorting] = useState<SortingState>([]);
 	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -34,10 +39,12 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
 
 	return (
 		<div>
-			<div className="flex items-center py-4">
+			<div className="flex items-center py-4 gap-2">
 				<Input placeholder="Filter items..." value={(table.getColumn("name")?.getFilterValue() as string) ?? ""} onChange={(event) => table.getColumn("name")?.setFilterValue(event.target.value)} className="max-w-sm" />
-
 				<DataTableViewOptions table={table} />
+				<Link href={createLocation} className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
+					<PlusCircleIcon className="h-5 md:mr-2" /> <span className="hidden md:block">Add new Item </span>
+				</Link>
 			</div>
 
 			<div className="rounded-md border">

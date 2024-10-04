@@ -15,6 +15,7 @@ import { CategoryType } from "@/lib/type";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createItem } from "@/lib/actions";
+import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
 	name: z.string().min(2).max(50),
@@ -45,10 +46,10 @@ export const FormCreateItem = ({ category }: { category: CategoryType[] }) => {
 		<Form {...form}>
 			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
 				<div className="flex items-center gap-4">
-					<Button variant="outline" size="icon" className="h-7 w-7">
+					<Link href="/dashboard/items" className={cn(buttonVariants({ variant: "outline", size: "icon" }), "h-7 w-7")}>
 						<ChevronLeft className="h-4 w-4" />
 						<span className="sr-only">Back</span>
-					</Button>
+					</Link>
 					<h1 className="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0">Add Item</h1>
 					<Badge variant="outline" className="ml-auto md:ml-0">
 						New
