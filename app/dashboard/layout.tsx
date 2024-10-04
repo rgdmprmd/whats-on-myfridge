@@ -1,11 +1,10 @@
 import { SideNav } from "@/components/side-nav";
 import { SideNavMobile } from "@/components/side-nav-mobile";
 import { BreadcrumbsHeader } from "@/components/breadcrumbs-header";
-import { Search } from "lucide-react";
+import { CircleUser, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
 import { signOut } from "@/auth";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
@@ -23,7 +22,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
 							<Button variant="outline" size="icon" className="overflow-hidden rounded-full">
-								<Image src="/placeholder_user.png" width={36} height={36} alt="Avatar" className="overflow-hidden rounded-full" />
+								<CircleUser className="h-5 w-5" />
+								<span className="sr-only">Toggle user menu</span>
 							</Button>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
