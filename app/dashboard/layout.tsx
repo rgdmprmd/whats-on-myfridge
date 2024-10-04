@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { signOut } from "@/auth";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
 	return (
@@ -31,7 +32,16 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 							<DropdownMenuItem>Settings</DropdownMenuItem>
 							<DropdownMenuItem>Support</DropdownMenuItem>
 							<DropdownMenuSeparator />
-							<DropdownMenuItem>Logout</DropdownMenuItem>
+							<form
+								action={async () => {
+									"use server";
+									await signOut();
+								}}
+							>
+								<button type="submit" className="w-full text-left border">
+									<DropdownMenuItem>Sign Out</DropdownMenuItem>
+								</button>
+							</form>
 						</DropdownMenuContent>
 					</DropdownMenu>
 				</header>
