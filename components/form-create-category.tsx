@@ -12,12 +12,13 @@ import { ChevronLeft } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { createCategory } from "@/lib/actions";
+import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
 	category_name: z.string().min(2).max(50),
 });
 
-export const FormCreateCategory = () => {
+export const FormCreateCategory = ({ itemId }: { itemId: string | null }) => {
 	// 1. Define your form.
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -30,23 +31,23 @@ export const FormCreateCategory = () => {
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		// Do something with the form values.
 		// ✅ This will be type-safe and validated.
-		createCategory(values);
+		createCategory(itemId, values);
 	}
 
 	return (
 		<Form {...form}>
 			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
 				<div className="flex items-center gap-4">
-					<Button variant="outline" size="icon" className="h-7 w-7">
+					<Link href={itemId ? `/dashboard/items/${itemId}/update` : `/dashboard/items/create`} className={cn(buttonVariants({ variant: "outline", size: "icon" }), "h-7 w-7")}>
 						<ChevronLeft className="h-4 w-4" />
 						<span className="sr-only">Back</span>
-					</Button>
+					</Link>
 					<h1 className="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0">Add Category</h1>
 					<Badge variant="outline" className="ml-auto md:ml-0">
 						New
 					</Badge>
 					<div className="hidden items-center gap-2 md:ml-auto md:flex">
-						<Link href="/dashboard/items" className={buttonVariants({ variant: "outline", size: "sm" })}>
+						<Link href={itemId ? `/dashboard/items/${itemId}/update` : `/dashboard/items/create`} className={buttonVariants({ variant: "outline", size: "sm" })}>
 							Discard
 						</Link>
 						<Button type="submit" size="sm">
@@ -84,7 +85,7 @@ export const FormCreateCategory = () => {
 					</div>
 				</div>
 				<div className="flex items-center justify-center gap-2 md:hidden">
-					<Link href="/dashboard/items" className={buttonVariants({ variant: "outline", size: "sm" })}>
+					<Link href={itemId ? `/dashboard/items/${itemId}/update` : `/dashboard/items`} className={buttonVariants({ variant: "outline", size: "sm" })}>
 						Discard
 					</Link>
 					<Button type="submit" size="sm">
