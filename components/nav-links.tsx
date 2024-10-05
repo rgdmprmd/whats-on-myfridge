@@ -18,7 +18,6 @@ export const NavLinks = () => {
 		return (name === "Dashboards" && isExactMatch(path)) || (name !== "Dashboards" && isItemsActive(path));
 	};
 
-	console.log(session?.user.role);
 	return (
 		<>
 			{links
