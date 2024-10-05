@@ -25,7 +25,7 @@ export const AvatarHeader = () => {
 						await signOut();
 					}}
 				>
-					<button type="submit" className="w-full text-left border">
+					<button type="submit" className="w-full text-left">
 						<DropdownMenuItem>Sign Out</DropdownMenuItem>
 					</button>
 				</form>

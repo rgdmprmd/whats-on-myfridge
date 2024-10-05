@@ -4,7 +4,7 @@ import prismadb from "@/lib/prismadb";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { slugify } from "@/lib/utils";
-import { signIn } from "@/auth";
+import { auth, signIn } from "@/auth";
 import { AuthError } from "next-auth";
 import bcrypt from "bcrypt";
 
@@ -126,11 +126,14 @@ export async function updateItem(id: string, values: ValueItem) {
 }
 
 export async function deleteItem(id: string) {
+	const session = await auth();
+	if (session?.user.role !== "admin") return { success: false, message: "You are not authorized to call this action." };
+
 	try {
 		await prismadb.item.delete({ where: { id } });
+		revalidatePath("/dashboard/items");
+		return { success: true, message: "Item deleted successfully." };
 	} catch (error) {
-		return { message: "Database Error: Failed to delete invoice.", error };
+		return { success: false, message: "Database Error: Failed to delete invoice.", error };
 	}
-
-	revalidatePath("/dashboard/items");
 }

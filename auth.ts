@@ -41,6 +41,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 					if (!user) return null;
 
 					const passwordMatch = await bcrypt.compare(password, user.password);
+
 					if (passwordMatch) return user;
 				}
 
@@ -49,4 +50,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 			},
 		}),
 	],
+	callbacks: {
+		// Add role to session
+		async session({ session, token }) {
+			// Attach the role to the session object
+			session.user.role = token.role;
+			return session;
+		},
+		async jwt({ token, user }) {
+			if (user) {
+				token.role = user.role; // Attach role to token
+			}
+			return token;
+		},
+	},
 });
