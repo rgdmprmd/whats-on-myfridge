@@ -124,3 +124,13 @@ export async function updateItem(id: string, values: ValueItem) {
 	revalidatePath("/dashboard/items");
 	redirect("/dashboard/items");
 }
+
+export async function deleteItem(id: string) {
+	try {
+		await prismadb.item.delete({ where: { id } });
+	} catch (error) {
+		return { message: "Database Error: Failed to delete invoice.", error };
+	}
+
+	revalidatePath("/dashboard/items");
+}
