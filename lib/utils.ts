@@ -1,5 +1,5 @@
 import { clsx, type ClassValue } from "clsx";
-import { Box, Home } from "lucide-react";
+import { Box, Home, UserCog } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -9,9 +9,10 @@ export function cn(...inputs: ClassValue[]) {
 // Map of links to display in the side navigation.
 // Depending on the size of the application, this would be stored in a database.
 export const links = [
-	{ name: "Dashboards", href: "/dashboard", icon: Home },
 	// { name: "Stocks", href: "/dashboard/stocks", icon: Scroll },
-	{ name: "Items", href: "/dashboard/items", icon: Box },
+	{ name: "Dashboards", href: "/dashboard", icon: Home, access: ["admin", "user"] },
+	{ name: "Items", href: "/dashboard/items", icon: Box, access: ["admin", "user"] },
+	{ name: "Users", href: "/dashboard/users", icon: UserCog, access: ["admin"] },
 ];
 
 export const slugify = (name: string) => {

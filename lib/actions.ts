@@ -43,6 +43,8 @@ export async function authenticate(values: SignInValues) {
 		}
 		throw error;
 	}
+
+	redirect("/dashboard");
 }
 
 export async function signUp(values: SignUpValues) {

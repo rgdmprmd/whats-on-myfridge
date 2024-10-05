@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { LineChart, Package2, PanelLeft } from "lucide-react";
 import { NavLinksMobile } from "@/components/nav-links-mobile";
 import { ModeToggleMobile } from "./mode-toggle-mobile";
+import { SessionProvider } from "next-auth/react";
 
 export const SideNavMobile = () => {
 	return (
@@ -22,7 +23,9 @@ export const SideNavMobile = () => {
 						<Package2 className="h-5 w-5 transition-all group-hover:scale-110" />
 						<span className="sr-only">Acme Inc</span>
 					</Link>
-					<NavLinksMobile />
+					<SessionProvider>
+						<NavLinksMobile />
+					</SessionProvider>
 					<ModeToggleMobile />
 					<Link href="#" className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground">
 						<LineChart className="h-5 w-5" />

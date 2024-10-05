@@ -1,11 +1,9 @@
 import Link from "next/link";
-// import { NavLinks } from "@/components/nav-links";
-// import { Button } from "@/components/ui/button";
-// import { Power } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Package2, Settings } from "lucide-react";
 import { NavLinks } from "./nav-links";
 import { ModeToggle } from "./mode-toggle";
+import { SessionProvider } from "next-auth/react";
 
 export function SideNav() {
 	return (
@@ -16,7 +14,9 @@ export function SideNav() {
 						<Package2 className="h-4 w-4 transition-all group-hover:scale-110" />
 						<span className="sr-only">Acme Inc</span>
 					</Link>
-					<NavLinks />
+					<SessionProvider>
+						<NavLinks />
+					</SessionProvider>
 				</nav>
 				<nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-5">
 					<Tooltip>
