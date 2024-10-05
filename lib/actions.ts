@@ -17,6 +17,11 @@ export type ValueItem = {
 	category: string;
 };
 
+export type ValueUser = {
+	name: string;
+	role: string;
+};
+
 export type SignUpValues = {
 	first_name: string;
 	last_name: string;
@@ -136,6 +141,39 @@ export async function deleteItem(id: string) {
 		revalidatePath("/dashboard/items");
 		return { success: true, message: "Item deleted successfully." };
 	} catch (error) {
-		return { success: false, message: "Database Error: Failed to delete invoice.", error };
+		return { success: false, message: "Database Error: Failed to delete item.", error };
 	}
+}
+
+export async function deleteUser(id: string) {
+	const session = await auth();
+	if (session?.user.role !== "admin") return { success: false, message: "You are not authorized to call this action." };
+
+	try {
+		await prismadb.user.delete({ where: { id } });
+		revalidatePath("/dashboard/users");
+		return { success: true, message: "User deleted successfully." };
+	} catch (error) {
+		return { success: false, message: "Database Error: Failed to delete user.", error };
+	}
+}
+
+export async function updateUser(id: string, values: ValueUser) {
+	try {
+		await prismadb.user.update({
+			where: {
+				id: id,
+			},
+			data: {
+				name: values.name,
+				role: values.role,
+			},
+		});
+	} catch (error) {
+		console.log(`Create Error:`, error);
+		throw error;
+	}
+
+	revalidatePath("/dashboard/users");
+	redirect("/dashboard/users");
 }

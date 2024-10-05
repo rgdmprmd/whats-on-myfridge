@@ -5,7 +5,7 @@ export type User = {
 	password: string;
 	role: string;
 	createdAt: Date;
-} | null;
+};
 
 export type CategoryType = {
 	name: string;
