@@ -1,15 +1,17 @@
 import React from "react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { CircleUser } from "lucide-react";
-import { signOut } from "@/auth";
+import { CircleUser, Crown } from "lucide-react";
+import { auth, signOut } from "@/auth";
 
-export const AvatarHeader = () => {
+export const AvatarHeader = async () => {
+	const session = await auth();
+
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
 				<Button variant="outline" size="icon" className="overflow-hidden rounded-full">
-					<CircleUser className="h-5 w-5" />
+					{session?.user.role === "admin" ? <Crown className="h-5 w-5" /> : <CircleUser className="h-5 w-5" />}
 					<span className="sr-only">Toggle user menu</span>
 				</Button>
 			</DropdownMenuTrigger>
