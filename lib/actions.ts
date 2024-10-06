@@ -160,7 +160,11 @@ export async function deleteUser(id: string, email: string) {
 	}
 }
 
-export async function updateUser(id: string, values: ValueUser) {
+export async function updateUser(id: string, email: string, values: ValueUser) {
+	const session = await auth();
+	if (session?.user.role !== "admin") return { success: false, message: "You are not authorized to call this action." };
+	if (session.user.email === email) return { success: false, message: "You are trying to update yourself." };
+
 	try {
 		await prismadb.user.update({
 			where: {
@@ -171,11 +175,10 @@ export async function updateUser(id: string, values: ValueUser) {
 				role: values.role,
 			},
 		});
+		revalidatePath("/dashboard/users");
+		return { success: true, message: "User updated successfully." };
 	} catch (error) {
 		console.log(`Create Error:`, error);
-		throw error;
+		return { success: false, message: "Database Error: Failed to update user.", error };
 	}
-
-	revalidatePath("/dashboard/users");
-	redirect("/dashboard/users");
 }

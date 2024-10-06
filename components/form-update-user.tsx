@@ -15,6 +15,9 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Label } from "./ui/label";
 import { updateUser } from "@/lib/actions";
+import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
+import { ToastAction } from "@/components/ui/toast";
 
 const formSchema = z.object({
 	name: z.string().min(2).max(50),
@@ -22,6 +25,9 @@ const formSchema = z.object({
 });
 
 export const FormUpdateUser = ({ user }: { user: User }) => {
+	const { toast } = useToast();
+	const router = useRouter();
+
 	// 1. Define your form.
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -32,10 +38,27 @@ export const FormUpdateUser = ({ user }: { user: User }) => {
 	});
 
 	// 2. Define a submit handler.
-	function onSubmit(values: z.infer<typeof formSchema>) {
+	async function onSubmit(values: z.infer<typeof formSchema>) {
 		// Do something with the form values.
 		// ✅ This will be type-safe and validated.
-		updateUser(user.id, values);
+		const res = await updateUser(user.id, user.email, values);
+
+		if (!res.success) {
+			toast({
+				variant: "destructive",
+				title: "Save Failed!",
+				description: res.message,
+				action: <ToastAction altText="Try again">Try again</ToastAction>,
+			});
+		} else {
+			toast({
+				variant: "default",
+				title: "Action Fired!",
+				description: res.message,
+			});
+
+			router.push("/dashboard/users");
+		}
 	}
 
 	return (
