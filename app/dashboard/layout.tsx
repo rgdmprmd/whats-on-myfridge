@@ -4,6 +4,7 @@ import { BreadcrumbsHeader } from "@/components/breadcrumbs-header";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { AvatarHeader } from "@/components/avatar-header";
+import { Toaster } from "@/components/ui/toaster";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
 	return (
@@ -19,7 +20,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 					</div>
 					<AvatarHeader />
 				</header>
-				<main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">{children}</main>
+				<main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
+					{children}
+					<Toaster />
+				</main>
 			</div>
 		</div>
 	);

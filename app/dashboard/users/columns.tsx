@@ -31,7 +31,7 @@ export const columns: ColumnDef<User>[] = [
 		id: "actions",
 		cell: ({ row }) => {
 			const item = row.original;
-			return <ActionUser id={item.id} />;
+			return <ActionUser id={item.id} email={item.email} />;
 		},
 	},
 ];

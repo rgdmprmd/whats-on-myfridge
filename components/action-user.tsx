@@ -1,3 +1,5 @@
+"use client";
+
 import React, { FormEvent, useState } from "react";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -5,14 +7,33 @@ import { Button } from "@/components/ui/button";
 import { deleteUser } from "@/lib/actions";
 import { MoreHorizontal } from "lucide-react";
 import Link from "next/link";
+import { useToast } from "@/hooks/use-toast";
+import { ToastAction } from "@/components/ui/toast";
 
-export const ActionUser = ({ id }: { id: string }) => {
+export const ActionUser = ({ id, email }: { id: string; email: string }) => {
 	const [open, setOpen] = useState(false);
+	const { toast } = useToast();
 
-	const deleteUserWithId = (e: FormEvent<HTMLFormElement>) => {
+	const deleteUserWithId = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		deleteUser(id);
-		setOpen(false);
+		const res = await deleteUser(id, email);
+
+		if (!res.success) {
+			setOpen(false);
+			toast({
+				variant: "destructive",
+				title: "Delete Failed!",
+				description: res.message,
+				action: <ToastAction altText="Try again">Try again</ToastAction>,
+			});
+		} else {
+			setOpen(false);
+			toast({
+				variant: "default",
+				title: "Action Fired!",
+				description: res.message,
+			});
+		}
 	};
 
 	return (

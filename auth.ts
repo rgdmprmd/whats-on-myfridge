@@ -2,11 +2,11 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import prismadb from "@/lib/prismadb";
 import { z } from "zod";
-import { User } from "@/lib/type";
+import { UserAuth } from "@/lib/type";
 import { authConfig } from "@/auth.config";
 import bcrypt from "bcrypt";
 
-async function getUser(email: string): Promise<User | undefined> {
+async function getUser(email: string): Promise<UserAuth | undefined> {
 	try {
 		const user = await prismadb.user.findUnique({ where: { email: email } });
 		return user;

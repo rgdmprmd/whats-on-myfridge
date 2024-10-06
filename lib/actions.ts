@@ -145,9 +145,10 @@ export async function deleteItem(id: string) {
 	}
 }
 
-export async function deleteUser(id: string) {
+export async function deleteUser(id: string, email: string) {
 	const session = await auth();
 	if (session?.user.role !== "admin") return { success: false, message: "You are not authorized to call this action." };
+	if (session.user.email === email) return { success: false, message: "You are trying to remove yourself." };
 
 	try {
 		await prismadb.user.delete({ where: { id } });
