@@ -20,7 +20,10 @@ model User {
   email     String   @unique
   password  String
   role      String   @default("user")
-  createdAt DateTime @default(now())
+  createdBy String
+  updatedBy String?
+  createdAt DateTime @default(now()) // Automatically sets the current timestamp when the record is created
+  updatedAt DateTime @updatedAt // Automatically updates the timestamp when the record is updated
 }
 
 model Item {
@@ -29,11 +32,19 @@ model Item {
   name        String
   category    Category @relation(fields: [category_id], references: [id])
   category_id String
+  createdBy   String
+  updatedBy   String?
+  createdAt   DateTime @default(now()) // Automatically sets the current timestamp when the record is created
+  updatedAt   DateTime @updatedAt // Automatically updates the timestamp when the record is updated
 }
 
 model Category {
-  id   String @id @default(cuid())
-  name String
-  slug String @unique
-  item Item[]
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  item      Item[]
+  createdBy String
+  updatedBy String?
+  createdAt DateTime @default(now()) // Automatically sets the current timestamp when the record is created
+  updatedAt DateTime @updatedAt // Automatically updates the timestamp when the record is updated
 }
