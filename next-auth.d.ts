@@ -1,6 +1,13 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import NextAuth from "next-auth";
 
+interface AccessProps {
+	name: string;
+	href: string;
+	icon: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>;
+	access: string[];
+}
+
 // Extend NextAuth types
 declare module "next-auth" {
 	interface User {
@@ -11,6 +18,7 @@ declare module "next-auth" {
 		user: {
 			role: string; // Add role to the Session user
 		} & DefaultSession["user"];
+		access: AccessProps[];
 	}
 }
 

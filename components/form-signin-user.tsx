@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -9,6 +9,9 @@ import { z } from "zod";
 import { Button } from "./ui/button";
 import Link from "next/link";
 import { authenticate } from "@/lib/actions";
+import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
+import { ToastAction } from "@/components/ui/toast";
 
 const formSchema = z.object({
 	email: z.string().email(),
@@ -16,7 +19,9 @@ const formSchema = z.object({
 });
 
 const FormSignInUser = () => {
-	const [isError, setIsError] = useState("");
+	const { toast } = useToast();
+	const router = useRouter();
+
 	// 1. Define your form.
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -32,12 +37,26 @@ const FormSignInUser = () => {
 		// ✅ This will be type-safe and validated.
 		// console.log(values);
 		const res = await authenticate(values);
-		if (res?.error) setIsError(res.error);
+		if (!res.success) {
+			toast({
+				variant: "destructive",
+				title: "Sign in Failed!",
+				description: res.message,
+				action: <ToastAction altText="Try again">Try again</ToastAction>,
+			});
+		} else {
+			toast({
+				variant: "default",
+				title: "Action Fired!",
+				description: res.message,
+			});
+
+			router.push("/dashboard");
+		}
 	}
 
 	return (
 		<div className="grid gap-4">
-			{isError && <p className="text-sm text-red-500">{isError}</p>}
 			<Form {...form}>
 				<form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
 					<div className="grid gap-2">

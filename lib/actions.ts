@@ -36,20 +36,20 @@ export type SignInValues = {
 
 export async function authenticate(values: SignInValues) {
 	try {
-		await signIn("credentials", values);
+		const result = await signIn("credentials", { ...values, redirect: false });
+		if (result?.error) throw new AuthError(result.error);
+		return { success: true, message: "Signed in successfully." };
 	} catch (error) {
 		if (error instanceof AuthError) {
 			switch (error.type) {
 				case "CredentialsSignin":
-					return { error: "Invalid Credentials." };
+					return { success: false, message: "Invalid Credentials." };
 				default:
-					return { error: "Something went wrong." };
+					return { success: false, message: "Database Error: Something went wrong." };
 			}
 		}
 		throw error;
 	}
-
-	redirect("/dashboard");
 }
 
 export async function signUp(values: SignUpValues) {
