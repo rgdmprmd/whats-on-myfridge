@@ -6,15 +6,6 @@ export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
 }
 
-// Map of links to display in the side navigation.
-// Depending on the size of the application, this would be stored in a database.
-export const links = [
-	// { name: "Stocks", href: "/dashboard/stocks", icon: Scroll },
-	{ name: "Dashboards", href: "/dashboard", icon: Home, access: ["admin", "user"] },
-	{ name: "Items", href: "/dashboard/items", icon: Box, access: ["admin", "user"] },
-	{ name: "Users", href: "/dashboard/users", icon: UserCog, access: ["admin"] },
-];
-
 export const slugify = (name: string) => {
 	return name
 		.toLowerCase() // Convert to lowercase
@@ -25,3 +16,12 @@ export const slugify = (name: string) => {
 		.replace(/^-+/, "") // Remove leading dashes
 		.replace(/-+$/, ""); // Remove trailing dashes
 };
+
+// Map of links to display in the side navigation.
+// Depending on the size of the application, this would be stored in a database.
+export const links = [
+	// { name: "Stocks", href: "/dashboard/stocks", icon: Scroll },
+	{ name: "Dashboards", href: "/dashboard", icon: Home, access: ["admin", "user"] },
+	{ name: "Items", href: "/dashboard/items", icon: Box, access: ["admin", "user"] },
+	{ name: "Users", href: "/dashboard/users", icon: UserCog, access: ["admin"] },
+];

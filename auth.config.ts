@@ -12,20 +12,12 @@ export const authConfig = {
 			return token;
 		},
 		async session({ session, token }) {
-			// Attach the role to the session object
-			if (token?.role) {
-				session.user.role = token.role;
-
-				// Generate the allowed path list based on the user's role
-				const allowedPathList = links.filter((route) => route.access.includes(session.user.role));
-				session.access = allowedPathList;
-			}
+			// Add role to session
+			if (token.role) session.user.role = token.role;
 			return session;
 		},
 		authorized({ auth, request: { nextUrl } }) {
-			console.log(auth);
 			const isLoggedIn = !!auth?.user;
-			// const isOnDashboard = nextUrl.pathname.startsWith("/dashboard");
 			const requestedPath = nextUrl.pathname;
 			const userRole = auth?.user?.role;
 
