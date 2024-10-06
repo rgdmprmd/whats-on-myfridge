@@ -80,13 +80,15 @@ export async function createCategory(id: string | null, values: ValueCategory) {
 				slug: slug,
 			},
 		});
+
+		revalidatePath(id ? `/dashboard/items/${id}/update` : `/dashboard/items/create`);
+		return { success: true, message: "Category created successfully." };
 	} catch (error) {
 		console.log(`Create Error:`, error);
-		throw error;
+		return { success: false, message: "Database Error: Failed to create category.", error };
 	}
 
-	revalidatePath(id ? `/dashboard/items/${id}/update` : `/dashboard/items/create`);
-	redirect(id ? `/dashboard/items/${id}/update` : `/dashboard/items/create`);
+	// redirect(id ? `/dashboard/items/${id}/update` : `/dashboard/items/create`);
 }
 
 export async function createItem(values: ValueItem) {
@@ -100,13 +102,13 @@ export async function createItem(values: ValueItem) {
 				category_id: values.category,
 			},
 		});
+
+		revalidatePath("/dashboard/items");
+		return { success: true, message: "Item created successfully." };
 	} catch (error) {
 		console.log(`Create Error:`, error);
-		throw error;
+		return { success: false, message: "Database Error: Failed to create item.", error };
 	}
-
-	revalidatePath("/dashboard/items");
-	redirect("/dashboard/items");
 }
 
 export async function updateItem(id: string, values: ValueItem) {
@@ -123,13 +125,12 @@ export async function updateItem(id: string, values: ValueItem) {
 				category_id: values.category,
 			},
 		});
+		revalidatePath("/dashboard/items");
+		return { success: true, message: "Item updated successfully." };
 	} catch (error) {
 		console.log(`Create Error:`, error);
-		throw error;
+		return { success: false, message: "Database Error: Failed to update item.", error };
 	}
-
-	revalidatePath("/dashboard/items");
-	redirect("/dashboard/items");
 }
 
 export async function deleteItem(id: string) {

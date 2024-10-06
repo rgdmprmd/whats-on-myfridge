@@ -16,6 +16,8 @@ import Link from "next/link";
 import { updateItem } from "@/lib/actions";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
+import { ToastAction } from "@/components/ui/toast";
 
 const formSchema = z.object({
 	name: z.string().min(2).max(50),
@@ -23,6 +25,7 @@ const formSchema = z.object({
 });
 
 export const FormUpdateItem = ({ category, item }: { category: CategoryType[]; item: ItemType }) => {
+	const { toast } = useToast();
 	const router = useRouter();
 
 	// 1. Define your form.
@@ -35,10 +38,27 @@ export const FormUpdateItem = ({ category, item }: { category: CategoryType[]; i
 	});
 
 	// 2. Define a submit handler.
-	function onSubmit(values: z.infer<typeof formSchema>) {
+	async function onSubmit(values: z.infer<typeof formSchema>) {
 		// Do something with the form values.
 		// ✅ This will be type-safe and validated.
-		updateItem(item.id, values);
+		const res = await updateItem(item.id, values);
+
+		if (!res.success) {
+			toast({
+				variant: "destructive",
+				title: "Save Failed!",
+				description: res.message,
+				action: <ToastAction altText="Try again">Try again</ToastAction>,
+			});
+		} else {
+			toast({
+				variant: "default",
+				title: "Action Fired!",
+				description: res.message,
+			});
+
+			router.push("/dashboard/items");
+		}
 	}
 
 	const handleSelectChange = (val: string) => {

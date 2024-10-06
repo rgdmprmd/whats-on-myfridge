@@ -13,12 +13,18 @@ import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { createCategory } from "@/lib/actions";
 import { cn } from "@/lib/utils";
+import { ToastAction } from "./ui/toast";
+import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
 	category_name: z.string().min(2).max(50),
 });
 
 export const FormCreateCategory = ({ itemId }: { itemId: string | null }) => {
+	const { toast } = useToast();
+	const router = useRouter();
+
 	// 1. Define your form.
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -28,10 +34,27 @@ export const FormCreateCategory = ({ itemId }: { itemId: string | null }) => {
 	});
 
 	// 2. Define a submit handler.
-	function onSubmit(values: z.infer<typeof formSchema>) {
+	async function onSubmit(values: z.infer<typeof formSchema>) {
 		// Do something with the form values.
 		// ✅ This will be type-safe and validated.
-		createCategory(itemId, values);
+		const res = await createCategory(itemId, values);
+
+		if (!res.success) {
+			toast({
+				variant: "destructive",
+				title: "Save Failed!",
+				description: res.message,
+				action: <ToastAction altText="Try again">Try again</ToastAction>,
+			});
+		} else {
+			toast({
+				variant: "default",
+				title: "Action Fired!",
+				description: res.message,
+			});
+
+			router.push(itemId ? `/dashboard/items/${itemId}/update` : `/dashboard/items/create`);
+		}
 	}
 
 	return (

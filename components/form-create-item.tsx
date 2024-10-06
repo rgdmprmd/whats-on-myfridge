@@ -13,9 +13,11 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { ChevronLeft } from "lucide-react";
 import { CategoryType } from "@/lib/type";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { createItem } from "@/lib/actions";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
+import { ToastAction } from "@/components/ui/toast";
 
 const formSchema = z.object({
 	name: z.string().min(2).max(50),
@@ -23,6 +25,9 @@ const formSchema = z.object({
 });
 
 export const FormCreateItem = ({ category }: { category: CategoryType[] }) => {
+	const { toast } = useToast();
+	const router = useRouter();
+
 	// 1. Define your form.
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -32,10 +37,27 @@ export const FormCreateItem = ({ category }: { category: CategoryType[] }) => {
 	});
 
 	// 2. Define a submit handler.
-	function onSubmit(values: z.infer<typeof formSchema>) {
+	async function onSubmit(values: z.infer<typeof formSchema>) {
 		// Do something with the form values.
 		// ✅ This will be type-safe and validated.
-		createItem(values);
+		const res = await createItem(values);
+
+		if (!res.success) {
+			toast({
+				variant: "destructive",
+				title: "Save Failed!",
+				description: res.message,
+				action: <ToastAction altText="Try again">Try again</ToastAction>,
+			});
+		} else {
+			toast({
+				variant: "default",
+				title: "Action Fired!",
+				description: res.message,
+			});
+
+			router.push("/dashboard/items");
+		}
 	}
 
 	const handleSelectChange = (val: string) => {
