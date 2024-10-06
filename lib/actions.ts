@@ -7,6 +7,7 @@ import { slugify } from "@/lib/utils";
 import { auth, signIn } from "@/auth";
 import { AuthError } from "next-auth";
 import bcrypt from "bcrypt";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 export type ValueCategory = {
 	category_name: string;
@@ -34,6 +35,27 @@ export type SignInValues = {
 	password: string;
 };
 
+export async function checkSession(type: "get" | "strict" | "admin-only", email?: string) {
+	const session = await auth();
+	if (!session?.user) return { success: false, message: "You are not authorized to call this action.", data: null };
+
+	switch (type) {
+		case "strict":
+			if (session?.user.role !== "admin") return { success: false, message: "You are not authorized to call this action.", data: null };
+			if (session.user.email === email) return { success: false, message: "You are trying to update yourself.", data: null };
+			return { success: true, message: "User authorized to continue", data: session };
+		case "admin-only":
+			if (session?.user.role !== "admin") return { success: false, message: "You are not authorized to call this action.", data: null };
+			return { success: true, message: "User authorized to continue", data: session };
+
+		case "get":
+			return { success: true, message: "User authorized to continue", data: session };
+
+		default:
+			return { success: false, message: "Something went wrong at session check." };
+	}
+}
+
 export async function authenticate(values: SignInValues) {
 	try {
 		const result = await signIn("credentials", { ...values, redirect: false });
@@ -60,6 +82,7 @@ export async function signUp(values: SignUpValues) {
 				name: `${values.first_name} ${values.last_name}`,
 				email: values.email,
 				password: hashedPassword,
+				createdBy: values.email,
 			},
 		});
 	} catch (error) {
@@ -71,6 +94,9 @@ export async function signUp(values: SignUpValues) {
 }
 
 export async function createCategory(id: string | null, values: ValueCategory) {
+	const sessionCheck = await checkSession("get");
+	if (!sessionCheck.success) return { success: false, message: sessionCheck.message };
+
 	const slug = slugify(values.category_name);
 
 	try {
@@ -78,6 +104,7 @@ export async function createCategory(id: string | null, values: ValueCategory) {
 			data: {
 				name: values.category_name,
 				slug: slug,
+				createdBy: sessionCheck.data?.user.email,
 			},
 		});
 
@@ -87,11 +114,12 @@ export async function createCategory(id: string | null, values: ValueCategory) {
 		console.log(`Create Error:`, error);
 		return { success: false, message: "Database Error: Failed to create category.", error };
 	}
-
-	// redirect(id ? `/dashboard/items/${id}/update` : `/dashboard/items/create`);
 }
 
 export async function createItem(values: ValueItem) {
+	const sessionCheck = await checkSession("get");
+	if (!sessionCheck.success) return { success: false, message: sessionCheck.message };
+
 	const slug = slugify(values.name);
 
 	try {
@@ -100,6 +128,7 @@ export async function createItem(values: ValueItem) {
 				name: values.name,
 				slug: slug,
 				category_id: values.category,
+				createdBy: sessionCheck.data?.user.email,
 			},
 		});
 
@@ -112,6 +141,9 @@ export async function createItem(values: ValueItem) {
 }
 
 export async function updateItem(id: string, values: ValueItem) {
+	const sessionCheck = await checkSession("get");
+	if (!sessionCheck.success) return { success: false, message: sessionCheck.message };
+
 	const slug = slugify(values.name);
 
 	try {
@@ -123,6 +155,7 @@ export async function updateItem(id: string, values: ValueItem) {
 				name: values.name,
 				slug: slug,
 				category_id: values.category,
+				updatedBy: sessionCheck.data?.user.email,
 			},
 		});
 		revalidatePath("/dashboard/items");
@@ -133,9 +166,34 @@ export async function updateItem(id: string, values: ValueItem) {
 	}
 }
 
+export async function updateCategory(id: string, values: ValueCategory) {
+	const sessionCheck = await checkSession("get");
+	if (!sessionCheck.success) return { success: false, message: sessionCheck.message };
+
+	const slug = slugify(values.category_name);
+
+	try {
+		await prismadb.category.update({
+			where: {
+				id: id,
+			},
+			data: {
+				name: values.category_name,
+				slug: slug,
+				updatedBy: sessionCheck.data?.user.email,
+			},
+		});
+		revalidatePath("/dashboard/category");
+		return { success: true, message: "Category updated successfully." };
+	} catch (error) {
+		console.log(`Create Error:`, error);
+		return { success: false, message: "Database Error: Failed to update category.", error };
+	}
+}
+
 export async function deleteItem(id: string) {
-	const session = await auth();
-	if (session?.user.role !== "admin") return { success: false, message: "You are not authorized to call this action." };
+	const sessionCheck = await checkSession("admin-only");
+	if (!sessionCheck.success) return { success: false, message: sessionCheck.message };
 
 	try {
 		await prismadb.item.delete({ where: { id } });
@@ -146,10 +204,38 @@ export async function deleteItem(id: string) {
 	}
 }
 
+export async function deleteCategory(id: string) {
+	const sessionCheck = await checkSession("admin-only");
+	if (!sessionCheck.success) return { success: false, message: sessionCheck.message };
+
+	try {
+		await prismadb.category.delete({ where: { id } });
+		revalidatePath("/dashboard/category");
+		return { success: true, message: "Category deleted successfully." };
+	} catch (error) {
+		if (error instanceof PrismaClientKnownRequestError) {
+			switch (error.code) {
+				case "P2002": // Unique constraint failed
+					// console.error("Unique constraint failed:", error.message);
+					return { success: false, message: `Unique constraint failed: ${error.message}` };
+				case "P2003": // Unique constraint failed
+					// console.error("Unique constraint failed:", error.message);
+					return { success: false, message: `You are trying to delete category that already have an item.` };
+				case "P2016": // Foreign key constraint failed
+					// console.error("Foreign key constraint failed:", error.message);
+					return { success: false, message: `Foreign key constraint failed: ${error.message}` };
+				default:
+					// console.error("Known request error:", error.message);
+					return { success: false, message: `Known request error: ${error.message}` };
+			}
+		}
+		throw error;
+	}
+}
+
 export async function deleteUser(id: string, email: string) {
-	const session = await auth();
-	if (session?.user.role !== "admin") return { success: false, message: "You are not authorized to call this action." };
-	if (session.user.email === email) return { success: false, message: "You are trying to remove yourself." };
+	const sessionCheck = await checkSession("strict", email);
+	if (!sessionCheck.success) return { success: false, message: sessionCheck.message };
 
 	try {
 		await prismadb.user.delete({ where: { id } });
@@ -161,9 +247,8 @@ export async function deleteUser(id: string, email: string) {
 }
 
 export async function updateUser(id: string, email: string, values: ValueUser) {
-	const session = await auth();
-	if (session?.user.role !== "admin") return { success: false, message: "You are not authorized to call this action." };
-	if (session.user.email === email) return { success: false, message: "You are trying to update yourself." };
+	const sessionCheck = await checkSession("strict", email);
+	if (!sessionCheck.success) return { success: false, message: sessionCheck.message };
 
 	try {
 		await prismadb.user.update({
@@ -173,6 +258,7 @@ export async function updateUser(id: string, email: string, values: ValueUser) {
 			data: {
 				name: values.name,
 				role: values.role,
+				updatedBy: sessionCheck.data?.user.email,
 			},
 		});
 		revalidatePath("/dashboard/users");

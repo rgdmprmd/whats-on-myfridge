@@ -29,6 +29,16 @@ export type ItemType = {
 	category_id: string;
 };
 
+export type CategoryColumnType = {
+	id: string;
+	name: string;
+	slug: string;
+	createdBy: string;
+	updatedBy: string | null;
+	createdAt: Date;
+	updatedAt: Date;
+};
+
 export type ItemAndCategoryType = {
 	id: string;
 	name: string;

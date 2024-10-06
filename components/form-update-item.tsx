@@ -62,7 +62,7 @@ export const FormUpdateItem = ({ category, item }: { category: CategoryType[]; i
 	}
 
 	const handleSelectChange = (val: string) => {
-		if (val === "new") router.push(`/dashboard/category/create?item=${item.id}`);
+		if (val === "new") router.push(`/dashboard/category/create?ref=update-item&item=${item.id}`);
 	};
 
 	return (

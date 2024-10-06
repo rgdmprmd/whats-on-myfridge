@@ -9,37 +9,33 @@ import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { Button, buttonVariants } from "./ui/button";
 import { ChevronLeft } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { createCategory } from "@/lib/actions";
 import { cn } from "@/lib/utils";
 import { ToastAction } from "./ui/toast";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
+import { updateCategory } from "@/lib/actions";
 
 const formSchema = z.object({
 	category_name: z.string().min(2).max(50),
 });
 
-export const FormCreateCategory = ({ itemId, referal }: { itemId: string | null; referal: string | null }) => {
+interface UpdateCategoryProps {
+	category: {
+		id: string;
+		name: string;
+	};
+}
+
+export const FormUpdateCategory = ({ category }: UpdateCategoryProps) => {
 	const { toast } = useToast();
 	const router = useRouter();
-
-	let redirectPath = "";
-
-	if (referal === "create-item") {
-		redirectPath = "/dashboard/items/create";
-	} else if (referal === "update-item") {
-		redirectPath = `/dashboard/items/${itemId}/update`;
-	} else {
-		redirectPath = "/dashboard/category";
-	}
 
 	// 1. Define your form.
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			category_name: "",
+			category_name: category.name,
 		},
 	});
 
@@ -47,7 +43,7 @@ export const FormCreateCategory = ({ itemId, referal }: { itemId: string | null;
 	async function onSubmit(values: z.infer<typeof formSchema>) {
 		// Do something with the form values.
 		// ✅ This will be type-safe and validated.
-		const res = await createCategory(itemId, values);
+		const res = await updateCategory(category.id, values);
 
 		if (!res.success) {
 			toast({
@@ -63,7 +59,7 @@ export const FormCreateCategory = ({ itemId, referal }: { itemId: string | null;
 				description: res.message,
 			});
 
-			router.push(redirectPath);
+			router.push("/dashboard/category");
 		}
 	}
 
@@ -71,16 +67,13 @@ export const FormCreateCategory = ({ itemId, referal }: { itemId: string | null;
 		<Form {...form}>
 			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
 				<div className="flex items-center gap-4">
-					<Link href={redirectPath} className={cn(buttonVariants({ variant: "outline", size: "icon" }), "h-7 w-7")}>
+					<Link href={"/dashboard/category"} className={cn(buttonVariants({ variant: "outline", size: "icon" }), "h-7 w-7")}>
 						<ChevronLeft className="h-4 w-4" />
 						<span className="sr-only">Back</span>
 					</Link>
-					<h1 className="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0">Add Category</h1>
-					<Badge variant="outline" className="ml-auto md:ml-0">
-						New
-					</Badge>
+					<h1 className="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0">Update Category</h1>
 					<div className="hidden items-center gap-2 md:ml-auto md:flex">
-						<Link href={redirectPath} className={buttonVariants({ variant: "outline", size: "sm" })}>
+						<Link href={"/dashboard/category"} className={buttonVariants({ variant: "outline", size: "sm" })}>
 							Discard
 						</Link>
 						<Button type="submit" size="sm">
@@ -118,7 +111,7 @@ export const FormCreateCategory = ({ itemId, referal }: { itemId: string | null;
 					</div>
 				</div>
 				<div className="flex items-center justify-center gap-2 md:hidden">
-					<Link href={redirectPath} className={buttonVariants({ variant: "outline", size: "sm" })}>
+					<Link href={"/dashboard/category"} className={buttonVariants({ variant: "outline", size: "sm" })}>
 						Discard
 					</Link>
 					<Button type="submit" size="sm">

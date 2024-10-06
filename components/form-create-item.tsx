@@ -61,7 +61,7 @@ export const FormCreateItem = ({ category }: { category: CategoryType[] }) => {
 	}
 
 	const handleSelectChange = (val: string) => {
-		if (val === "new") redirect("/dashboard/category/create");
+		if (val === "new") redirect("/dashboard/category/create?ref=create-item");
 	};
 
 	return (
