@@ -47,3 +47,13 @@ export type ItemAndCategoryType = {
 	category_id: string;
 	category: { name: string };
 };
+
+export type ItemLedgerType = {
+	id: string;
+	item_id: string;
+	type: "OUTBOUND" | "INBOUND";
+	quantityChange: number;
+	user_email: string;
+	reason: string | null;
+	timestamp: Date;
+};

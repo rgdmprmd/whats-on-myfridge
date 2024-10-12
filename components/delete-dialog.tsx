@@ -16,8 +16,9 @@ export const DeleteDialog = ({ id }: { id: string }) => {
 
 	const deleteItemWithId = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
+
 		const res = await deleteItem(id);
-		console.log(res);
+
 		if (!res.success) {
 			setOpen(false);
 			toast({
@@ -48,6 +49,9 @@ export const DeleteDialog = ({ id }: { id: string }) => {
 				<DropdownMenuContent align="end">
 					<DropdownMenuLabel>Actions</DropdownMenuLabel>
 					<DropdownMenuSeparator />
+					<DropdownMenuItem>
+						<Link href={`/dashboard/items/${id}`}>Show Details</Link>
+					</DropdownMenuItem>
 					<DropdownMenuItem>
 						<Link href={`/dashboard/items/${id}/update-stock`}>Update Stock</Link>
 					</DropdownMenuItem>
