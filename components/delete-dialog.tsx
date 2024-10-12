@@ -49,6 +49,9 @@ export const DeleteDialog = ({ id }: { id: string }) => {
 					<DropdownMenuLabel>Actions</DropdownMenuLabel>
 					<DropdownMenuSeparator />
 					<DropdownMenuItem>
+						<Link href={`/dashboard/items/${id}/update-stock`}>Update Stock</Link>
+					</DropdownMenuItem>
+					<DropdownMenuItem>
 						<Link href={`/dashboard/items/${id}/update`}>Update Item</Link>
 					</DropdownMenuItem>
 					<DialogTrigger asChild>

@@ -19,6 +19,12 @@ export type ValueItem = {
 	quantity: number;
 };
 
+export type ValueStock = {
+	type: "INBOUND" | "OUTBOUND";
+	quantityChange: number;
+	reason: string;
+};
+
 export type ValueUser = {
 	name: string;
 	role: string;
@@ -157,7 +163,6 @@ export async function updateItem(id: string, values: ValueItem) {
 				name: values.name,
 				slug: slug,
 				category_id: values.category,
-				quantity: values.quantity,
 				updatedBy: sessionCheck.data?.user.email,
 			},
 		});
@@ -166,6 +171,40 @@ export async function updateItem(id: string, values: ValueItem) {
 	} catch (error) {
 		console.log(`Create Error:`, error);
 		return { success: false, message: "Database Error: Failed to update item.", error };
+	}
+}
+
+export async function updateStock(id: string, qty: number, values: ValueStock) {
+	const sessionCheck = await checkSession("get");
+	if (!sessionCheck.success) return { success: false, message: sessionCheck.message };
+
+	if (values.type === "OUTBOUND") values.quantityChange *= -1;
+	const updatedQty = qty + values.quantityChange;
+
+	try {
+		await prismadb.item.update({
+			where: { id },
+			data: {
+				quantity: updatedQty,
+				updatedBy: sessionCheck.data?.user.email,
+			},
+		});
+
+		await prismadb.itemTransaction.create({
+			data: {
+				item_id: id,
+				type: values.type,
+				quantityChange: values.quantityChange,
+				user_email: sessionCheck.data?.user.email,
+				reason: values.reason,
+			},
+		});
+
+		revalidatePath("/dashboard/items");
+		return { success: true, message: "Stock updated successfully." };
+	} catch (error) {
+		console.log(`Create Error:`, error);
+		return { success: false, message: "Database Error: Failed to update stock.", error };
 	}
 }
 

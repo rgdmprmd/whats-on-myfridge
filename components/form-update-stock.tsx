@@ -4,28 +4,26 @@ import React from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { ChevronLeft } from "lucide-react";
-import { CategoryType, ItemType } from "@/lib/type";
+import { ItemType } from "@/lib/type";
 import Link from "next/link";
-import { updateItem } from "@/lib/actions";
+import { updateStock } from "@/lib/actions";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
-import { ToastAction } from "@/components/ui/toast";
 
 const formSchema = z.object({
-	name: z.string().min(2).max(50),
-	category: z.string(),
-	quantity: z.coerce.number(),
+	type: z.enum(["INBOUND", "OUTBOUND"]),
+	quantityChange: z.coerce.number(),
+	reason: z.string(),
 });
 
-export const FormUpdateItem = ({ category, item }: { category: CategoryType[]; item: ItemType }) => {
+export const FormUpdateStock = ({ item }: { item: ItemType }) => {
 	const { toast } = useToast();
 	const router = useRouter();
 
@@ -33,9 +31,8 @@ export const FormUpdateItem = ({ category, item }: { category: CategoryType[]; i
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			name: item.name,
-			category: item.category_id,
-			quantity: item.quantity,
+			quantityChange: item.quantity,
+			reason: "",
 		},
 	});
 
@@ -43,14 +40,24 @@ export const FormUpdateItem = ({ category, item }: { category: CategoryType[]; i
 	async function onSubmit(values: z.infer<typeof formSchema>) {
 		// Do something with the form values.
 		// ✅ This will be type-safe and validated.
-		const res = await updateItem(item.id, values);
+		if (values.type === "OUTBOUND") {
+			if (values.quantityChange > item.quantity) {
+				toast({
+					variant: "destructive",
+					title: "Update Failed!",
+					description: "You can't remove more items than are currently in stock.",
+				});
+				return false;
+			}
+		}
+
+		const res = await updateStock(item.id, item.quantity, values);
 
 		if (!res.success) {
 			toast({
 				variant: "destructive",
 				title: "Save Failed!",
 				description: res.message,
-				action: <ToastAction altText="Try again">Try again</ToastAction>,
 			});
 		} else {
 			toast({
@@ -63,10 +70,6 @@ export const FormUpdateItem = ({ category, item }: { category: CategoryType[]; i
 		}
 	}
 
-	const handleSelectChange = (val: string) => {
-		if (val === "new") router.push(`/dashboard/category/create?ref=update-item&item=${item.id}`);
-	};
-
 	return (
 		<Form {...form}>
 			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -75,10 +78,7 @@ export const FormUpdateItem = ({ category, item }: { category: CategoryType[]; i
 						<ChevronLeft className="h-4 w-4" />
 						<span className="sr-only">Back</span>
 					</Link>
-					<h1 className="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0">Update Item</h1>
-					<Badge variant="outline" className="ml-auto md:ml-0">
-						In Stock
-					</Badge>
+					<h1 className="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0">Update Stock</h1>
 					<div className="hidden items-center gap-2 md:ml-auto md:flex">
 						<Link href="/dashboard/items" className={buttonVariants({ variant: "outline", size: "sm" })}>
 							Discard
@@ -92,36 +92,28 @@ export const FormUpdateItem = ({ category, item }: { category: CategoryType[]; i
 					<div className="grid auto-rows-max items-start gap-4 lg:gap-8">
 						<Card>
 							<CardHeader>
-								<CardTitle>Item Details</CardTitle>
-								<CardDescription>Provide clear and concise name, for easier search.</CardDescription>
+								<CardTitle>Update Stock</CardTitle>
+								<CardDescription>Please fill information below if you want to update this item stock.</CardDescription>
 							</CardHeader>
 							<CardContent>
 								<div className="grid gap-6">
 									<div className="grid gap-3">
 										<FormField
 											control={form.control}
-											name="category"
+											name="type"
 											render={({ field }) => (
 												<FormItem>
-													<FormLabel>Category</FormLabel>
+													<FormLabel>
+														<span className="text-red-500">*</span> Type
+													</FormLabel>
 													<FormControl>
-														<Select
-															onValueChange={(value) => {
-																field.onChange(value);
-																handleSelectChange(value);
-															}}
-															value={field.value}
-														>
+														<Select onValueChange={(value) => field.onChange(value)} value={field.value}>
 															<SelectTrigger>
-																<SelectValue placeholder="Select category" />
+																<SelectValue placeholder="Select Type" />
 															</SelectTrigger>
 															<SelectContent>
-																<SelectItem value="new">New Category</SelectItem>
-																{category.map((cat: CategoryType) => (
-																	<SelectItem key={cat.id} value={cat.id}>
-																		{cat.name}
-																	</SelectItem>
-																))}
+																<SelectItem value="INBOUND">INBOUND</SelectItem>
+																<SelectItem value="OUTBOUND">OUTBOUND</SelectItem>
 															</SelectContent>
 														</Select>
 													</FormControl>
@@ -133,12 +125,29 @@ export const FormUpdateItem = ({ category, item }: { category: CategoryType[]; i
 									<div className="grid gap-3">
 										<FormField
 											control={form.control}
-											name="name"
+											name="quantityChange"
 											render={({ field }) => (
 												<FormItem>
-													<FormLabel>Name</FormLabel>
+													<FormLabel>
+														<span className="text-red-500">*</span> Qty Changes
+													</FormLabel>
 													<FormControl>
-														<Input type="text" placeholder="Royco ayam" {...field} />
+														<Input type="number" placeholder="Royco ayam" {...field} />
+													</FormControl>
+													<FormMessage />
+												</FormItem>
+											)}
+										/>
+									</div>
+									<div className="grid gap-3">
+										<FormField
+											control={form.control}
+											name="reason"
+											render={({ field }) => (
+												<FormItem>
+													<FormLabel>Remarks</FormLabel>
+													<FormControl>
+														<Input type="text" placeholder="Additional Reason (optional)" {...field} />
 													</FormControl>
 													<FormMessage />
 												</FormItem>
