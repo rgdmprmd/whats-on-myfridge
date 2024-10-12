@@ -16,6 +16,7 @@ export type ValueCategory = {
 export type ValueItem = {
 	name: string;
 	category: string;
+	quantity: number;
 };
 
 export type ValueUser = {
@@ -127,6 +128,7 @@ export async function createItem(values: ValueItem) {
 			data: {
 				name: values.name,
 				slug: slug,
+				quantity: values.quantity,
 				category_id: values.category,
 				createdBy: sessionCheck.data?.user.email,
 			},
@@ -155,6 +157,7 @@ export async function updateItem(id: string, values: ValueItem) {
 				name: values.name,
 				slug: slug,
 				category_id: values.category,
+				quantity: values.quantity,
 				updatedBy: sessionCheck.data?.user.email,
 			},
 		});

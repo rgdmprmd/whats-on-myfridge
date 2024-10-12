@@ -26,6 +26,7 @@ export type ItemType = {
 	id: string;
 	name: string;
 	slug: string;
+	quantity: number;
 	category_id: string;
 };
 

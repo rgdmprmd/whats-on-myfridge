@@ -22,6 +22,7 @@ import { ToastAction } from "@/components/ui/toast";
 const formSchema = z.object({
 	name: z.string().min(2).max(50),
 	category: z.string(),
+	quantity: z.coerce.number(),
 });
 
 export const FormCreateItem = ({ category }: { category: CategoryType[] }) => {
@@ -136,6 +137,21 @@ export const FormCreateItem = ({ category }: { category: CategoryType[] }) => {
 													<FormLabel>Name</FormLabel>
 													<FormControl>
 														<Input type="text" placeholder="Royco ayam" {...field} />
+													</FormControl>
+													<FormMessage />
+												</FormItem>
+											)}
+										/>
+									</div>
+									<div className="grid gap-3">
+										<FormField
+											control={form.control}
+											name="quantity"
+											render={({ field }) => (
+												<FormItem>
+													<FormLabel>Quantity</FormLabel>
+													<FormControl>
+														<Input type="number" placeholder="Insert quantity" {...field} />
 													</FormControl>
 													<FormMessage />
 												</FormItem>

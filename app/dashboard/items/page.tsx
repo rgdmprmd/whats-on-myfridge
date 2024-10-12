@@ -13,7 +13,7 @@ const ItemsPage = async () => {
 			},
 		},
 		orderBy: {
-			name: "asc",
+			updatedAt: "desc",
 		},
 	});
 

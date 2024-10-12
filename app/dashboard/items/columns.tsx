@@ -6,6 +6,7 @@ import { DataTableColumnHeader } from "@/components/ui/datatable-column-header";
 import { ItemAndCategoryType } from "@/lib/type";
 import { ColumnDef } from "@tanstack/react-table";
 import { DeleteDialog } from "@/components/delete-dialog";
+import { timeAgo } from "@/lib/utils";
 
 export const columns: ColumnDef<ItemAndCategoryType>[] = [
 	{
@@ -22,6 +23,18 @@ export const columns: ColumnDef<ItemAndCategoryType>[] = [
 	{
 		accessorKey: "category.name",
 		header: ({ column }) => <DataTableColumnHeader column={column} title="Category" />,
+	},
+	{
+		accessorKey: "quantity",
+		header: ({ column }) => <DataTableColumnHeader column={column} title="Qty" />,
+	},
+	{
+		accessorKey: "updatedAt",
+		header: ({ column }) => <DataTableColumnHeader column={column} title="Last modified" />,
+		cell: ({ row }) => {
+			const updatedAt = row.getValue("updatedAt") as Date; // Ensure updatedAt is a Date object
+			return <span>{timeAgo(new Date(updatedAt))}</span>; // Format using timeAgo function
+		},
 	},
 	{
 		id: "actions",

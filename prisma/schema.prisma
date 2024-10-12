@@ -15,27 +15,47 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  name      String
-  email     String   @unique
-  password  String
-  role      String   @default("user")
-  createdBy String
-  updatedBy String?
-  createdAt DateTime @default(now()) // Automatically sets the current timestamp when the record is created
-  updatedAt DateTime @updatedAt // Automatically updates the timestamp when the record is updated
+  id              String            @id @default(cuid())
+  name            String
+  email           String            @unique
+  password        String
+  role            String            @default("user")
+  createdBy       String
+  updatedBy       String?
+  createdAt       DateTime          @default(now()) // Automatically sets the current timestamp when the record is created
+  updatedAt       DateTime          @updatedAt // Automatically updates the timestamp when the record is updated
+  ItemTransaction ItemTransaction[]
+}
+
+model ItemTransaction {
+  id             String          @id @default(cuid())
+  item           Item            @relation(fields: [item_id], references: [id])
+  item_id        String
+  type           TransactionType
+  quantityChange Int // Positive for inbound, negative for outbound
+  performedBy    User            @relation(fields: [user_id], references: [id])
+  user_id        String
+  reason         String? // Optional reason for the transaction
+  timestamp      DateTime        @default(now())
+}
+
+enum TransactionType {
+  INBOUND // Item added to the fridge
+  OUTBOUND // Item removed, used, or expired
 }
 
 model Item {
-  id          String   @id @default(cuid())
-  slug        String   @unique
-  name        String
-  category    Category @relation(fields: [category_id], references: [id])
-  category_id String
-  createdBy   String
-  updatedBy   String?
-  createdAt   DateTime @default(now()) // Automatically sets the current timestamp when the record is created
-  updatedAt   DateTime @updatedAt // Automatically updates the timestamp when the record is updated
+  id              String            @id @default(cuid())
+  slug            String            @unique
+  name            String
+  quantity        Int               @default(1) // Amount of this item in stock
+  category        Category          @relation(fields: [category_id], references: [id])
+  category_id     String
+  createdBy       String
+  updatedBy       String?
+  createdAt       DateTime          @default(now()) // Automatically sets the current timestamp when the record is created
+  updatedAt       DateTime          @updatedAt // Automatically updates the timestamp when the record is updated
+  ItemTransaction ItemTransaction[]
 }
 
 model Category {
