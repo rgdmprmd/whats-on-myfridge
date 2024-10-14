@@ -16,7 +16,7 @@ export const columns: ColumnDef<ItemLedgerType>[] = [
 		},
 	},
 	{
-		accessorKey: "performedBy.email",
+		accessorKey: "user_email",
 		header: ({ column }) => <DataTableColumnHeader column={column} title="Updated by" />,
 	},
 	{

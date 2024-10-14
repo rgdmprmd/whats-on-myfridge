@@ -49,10 +49,10 @@ export const ActionUser = ({ id, email }: { id: string; email: string }) => {
 					<DropdownMenuLabel>Actions</DropdownMenuLabel>
 					<DropdownMenuSeparator />
 					<DropdownMenuItem>
-						<Link href={`/dashboard/users/${id}/update`}>Update Item</Link>
+						<Link href={`/dashboard/users/${id}/update`}>Update User</Link>
 					</DropdownMenuItem>
 					<DialogTrigger asChild>
-						<DropdownMenuItem className="hover:cursor-pointer">Delete Item</DropdownMenuItem>
+						<DropdownMenuItem className="hover:cursor-pointer">Delete User</DropdownMenuItem>
 					</DialogTrigger>
 				</DropdownMenuContent>
 			</DropdownMenu>

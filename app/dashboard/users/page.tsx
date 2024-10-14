@@ -16,7 +16,7 @@ const UserPage = async () => {
 	});
 
 	return (
-		<div className="flex flex-col space-y-4">
+		<div className="flex flex-col space-y-4 overflow-x-hidden">
 			<div className="flex flex-col items-start">
 				<h1 className="text-2xl font-semibold">Users</h1>
 				<p className="text-muted-foreground">You can manage user role here.</p>

@@ -50,12 +50,12 @@ const ItemsDetails = async ({ params }: { params: { id: string } }) => {
 	const formattedLastUpdated = lastUpdated ? formatDate(new Date(lastUpdated)) : "N/A";
 
 	return (
-		<div className="space-y-6">
+		<div className="space-y-6 overflow-x-hidden">
 			<Card>
 				<CardHeader className="pb-4">
 					<CardTitle>{item.name} Details</CardTitle>
 					<CardDescription className="leading-relaxed">
-						View the detailed information about <span className="text-foreground">{item.name}</span>, including its current stock, category, and recent transactions
+						View the detailed information about <span className="text-foreground">{item.name}</span>, including its current stock, category, and recent transactions. Last update at <span className="text-foreground">{formattedLastUpdated}</span>
 					</CardDescription>
 				</CardHeader>
 				<CardFooter>
@@ -67,7 +67,7 @@ const ItemsDetails = async ({ params }: { params: { id: string } }) => {
 					</Link>
 				</CardFooter>
 			</Card>
-			<div className="flex items-center justify-between gap-4">
+			<div className="flex flex-col md:flex-row items-center justify-between gap-4">
 				<Card className="w-full">
 					<CardHeader className="pb-2">
 						<CardDescription>Total Inbound</CardDescription>
@@ -82,16 +82,6 @@ const ItemsDetails = async ({ params }: { params: { id: string } }) => {
 					<CardHeader className="pb-2">
 						<CardDescription>Total Outbound</CardDescription>
 						<CardTitle className="text-4xl">{totalOutbound}</CardTitle>
-					</CardHeader>
-					<CardContent>
-						<div className="text-xs text-muted-foreground">+10% from last month</div>
-					</CardContent>
-					<CardFooter></CardFooter>
-				</Card>
-				<Card className="w-full">
-					<CardHeader className="pb-2">
-						<CardDescription>Last Updated</CardDescription>
-						<CardTitle className="text-4xl">{formattedLastUpdated}</CardTitle>
 					</CardHeader>
 					<CardContent>
 						<div className="text-xs text-muted-foreground">+10% from last month</div>

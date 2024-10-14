@@ -18,7 +18,7 @@ const ItemsPage = async () => {
 	});
 
 	return (
-		<div className="flex flex-col space-y-4">
+		<div className="flex flex-col space-y-4 overflow-x-hidden">
 			<div className="flex flex-col items-start">
 				<h1 className="text-2xl font-semibold">Items</h1>
 				<p className="text-muted-foreground">All available items you can use.</p>

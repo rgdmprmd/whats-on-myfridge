@@ -35,7 +35,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
 	return (
 		<div>
 			<div className="flex items-center py-4 gap-2">
-				<Input placeholder="Filter items..." value={(table.getColumn("name")?.getFilterValue() as string) ?? ""} onChange={(event) => table.getColumn("name")?.setFilterValue(event.target.value)} className="max-w-sm" />
+				<Input placeholder="Filter items..." value={(table.getColumn("user_email")?.getFilterValue() as string) ?? ""} onChange={(event) => table.getColumn("user_email")?.setFilterValue(event.target.value)} className="max-w-sm" />
 				<DataTableViewOptions table={table} />
 			</div>
 

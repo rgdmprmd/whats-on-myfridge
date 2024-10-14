@@ -11,7 +11,7 @@ const CategoryPage = async () => {
 	});
 
 	return (
-		<div className="flex flex-col space-y-4">
+		<div className="flex flex-col space-y-4 overflow-x-hidden">
 			<div className="flex flex-col items-start">
 				<h1 className="text-2xl font-semibold">Category</h1>
 				<p className="text-muted-foreground">All available category for your item you can use.</p>
