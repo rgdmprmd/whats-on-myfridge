@@ -24,7 +24,7 @@ export function SideNav() {
 						<TooltipTrigger asChild>
 							<ModeToggle />
 						</TooltipTrigger>
-						<TooltipContent side="right">Toggle Theme</TooltipContent>
+						<TooltipContent side="right">Dark Mode</TooltipContent>
 					</Tooltip>
 					<Tooltip>
 						<TooltipTrigger asChild>
