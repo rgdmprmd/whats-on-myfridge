@@ -3,10 +3,11 @@ import Link from "next/link";
 
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { LineChart, Package2, PanelLeft } from "lucide-react";
+import { Package2, PanelLeft, Power } from "lucide-react";
 import { NavLinksMobile } from "@/components/nav-links-mobile";
 import { ModeToggleMobile } from "./mode-toggle-mobile";
 import { SessionProvider } from "next-auth/react";
+import { signOut } from "@/auth";
 
 export const SideNavMobile = () => {
 	return (
@@ -27,10 +28,16 @@ export const SideNavMobile = () => {
 						<NavLinksMobile />
 					</SessionProvider>
 					<ModeToggleMobile />
-					<Link href="#" className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground">
-						<LineChart className="h-5 w-5" />
-						Settings
-					</Link>
+					<form
+						action={async () => {
+							"use server";
+							await signOut();
+						}}
+					>
+						<button type="submit" className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground">
+							<Power className="h-5 w-5" /> Sign Out
+						</button>
+					</form>
 				</nav>
 			</SheetContent>
 		</Sheet>

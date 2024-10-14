@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Package2, Settings } from "lucide-react";
-import { NavLinks } from "./nav-links";
-import { ModeToggle } from "./mode-toggle";
+import { Package2, Power } from "lucide-react";
+import { NavLinks } from "@/components/nav-links";
+import { ModeToggle } from "@/components/mode-toggle";
 import { SessionProvider } from "next-auth/react";
+import { signOut } from "@/auth";
 
 export function SideNav() {
 	return (
@@ -27,12 +28,19 @@ export function SideNav() {
 					</Tooltip>
 					<Tooltip>
 						<TooltipTrigger asChild>
-							<Link href="#" className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8">
-								<Settings className="h-5 w-5" />
-								<span className="sr-only">Settings</span>
-							</Link>
+							<form
+								action={async () => {
+									"use server";
+									await signOut();
+								}}
+							>
+								<button type="submit" className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8">
+									<Power className="h-5 w-5" />
+									<span className="sr-only">Sign Out</span>
+								</button>
+							</form>
 						</TooltipTrigger>
-						<TooltipContent side="right">Settings</TooltipContent>
+						<TooltipContent side="right">Sign Out</TooltipContent>
 					</Tooltip>
 				</nav>
 			</TooltipProvider>
