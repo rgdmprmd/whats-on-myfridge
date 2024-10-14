@@ -104,8 +104,8 @@ export const FormSignUpUser = () => {
 					<Button type="submit" className="w-full">
 						Create an account
 					</Button>
-					<Button variant="outline" className="w-full">
-						Sign up with GitHub
+					<Button type="button" variant="outline" className="w-full">
+						Sign up with Google
 					</Button>
 				</form>
 			</Form>

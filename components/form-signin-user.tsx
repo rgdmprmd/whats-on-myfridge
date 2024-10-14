@@ -82,7 +82,7 @@ const FormSignInUser = () => {
 								<FormItem>
 									<div className="flex items-center">
 										<FormLabel>Password</FormLabel>
-										<Link href="#" className="ml-auto inline-block text-sm underline">
+										<Link href="/forgot-password" className="ml-auto inline-block text-sm underline">
 											Forgot your password?
 										</Link>
 									</div>
@@ -97,7 +97,7 @@ const FormSignInUser = () => {
 					<Button type="submit" className="w-full">
 						Login
 					</Button>
-					<Button variant="outline" className="w-full">
+					<Button type="button" variant="outline" className="w-full">
 						Login with Google
 					</Button>
 				</form>
