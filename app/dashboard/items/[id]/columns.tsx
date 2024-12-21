@@ -11,6 +11,7 @@ export const columns: ColumnDef<ItemLedgerType>[] = [
 		accessorKey: "timestamp",
 		header: ({ column }) => <DataTableColumnHeader column={column} title="Updated at" />,
 		cell: ({ row }) => {
+			console.log(row);
 			const updatedAt = row.getValue("timestamp") as Date; // Ensure updatedAt is a Date object
 			return <span>{formatDate(updatedAt)}</span>; // Format using timeAgo function
 		},
@@ -27,5 +28,9 @@ export const columns: ColumnDef<ItemLedgerType>[] = [
 		accessorKey: "quantityChange",
 		header: ({ column }) => <DataTableColumnHeader column={column} title="Qty Changes" />,
 		cell: ({ row }) => <span className="text-right">{row.getValue("quantityChange")}</span>,
+	},
+	{
+		accessorKey: "reason",
+		header: ({ column }) => <DataTableColumnHeader column={column} title="Remarks" />,
 	},
 ];

@@ -22,7 +22,7 @@ import { ToastAction } from "@/components/ui/toast";
 const formSchema = z.object({
 	name: z.string().min(2).max(50),
 	category: z.string(),
-	quantity: z.coerce.number(),
+	// quantity: z.coerce.number(),
 });
 
 export const FormCreateItem = ({ category }: { category: CategoryType[] }) => {
@@ -143,7 +143,7 @@ export const FormCreateItem = ({ category }: { category: CategoryType[] }) => {
 											)}
 										/>
 									</div>
-									<div className="grid gap-3">
+									{/* <div className="grid gap-3">
 										<FormField
 											control={form.control}
 											name="quantity"
@@ -157,7 +157,7 @@ export const FormCreateItem = ({ category }: { category: CategoryType[] }) => {
 												</FormItem>
 											)}
 										/>
-									</div>
+									</div> */}
 								</div>
 							</CardContent>
 						</Card>

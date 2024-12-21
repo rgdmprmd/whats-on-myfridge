@@ -16,7 +16,6 @@ export type ValueCategory = {
 export type ValueItem = {
 	name: string;
 	category: string;
-	quantity: number;
 };
 
 export type ValueStock = {
@@ -134,7 +133,7 @@ export async function createItem(values: ValueItem) {
 			data: {
 				name: values.name,
 				slug: slug,
-				quantity: values.quantity,
+				quantity: 0,
 				category_id: values.category,
 				createdBy: sessionCheck.data?.user.email,
 			},
@@ -242,7 +241,23 @@ export async function deleteItem(id: string) {
 		revalidatePath("/dashboard/items");
 		return { success: true, message: "Item deleted successfully." };
 	} catch (error) {
-		return { success: false, message: "Database Error: Failed to delete item.", error };
+		if (error instanceof PrismaClientKnownRequestError) {
+			switch (error.code) {
+				case "P2002": // Unique constraint failed
+					// console.error("Unique constraint failed:", error.message);
+					return { success: false, message: `Unique constraint failed: ${error.message}` };
+				case "P2003": // Unique constraint failed
+					// console.error("Unique constraint failed:", error.message);
+					return { success: false, message: `You are trying to delete item that already have a transaction.` };
+				case "P2016": // Foreign key constraint failed
+					// console.error("Foreign key constraint failed:", error.message);
+					return { success: false, message: `Foreign key constraint failed: ${error.message}` };
+				default:
+					// console.error("Known request error:", error.message);
+					return { success: false, message: `Known request error: ${error.message}` };
+			}
+		}
+		throw error;
 	}
 }
 
